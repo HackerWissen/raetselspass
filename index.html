@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Die Prüfung</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Courier New', Courier, monospace;
+      color: #00ff99;
+      background-color: black;
+      overflow: hidden;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 700px;
+      margin: auto;
+      padding: 40px 20px;
+      background-color: rgba(0, 0, 0, 0.7);
+      border: 1px solid #00ff99;
+      border-radius: 10px;
+      margin-top: 10vh;
+      text-align: center;
+      box-shadow: 0 0 20px #00ff99;
+    }
+
+    h1 {
+      font-size: 1.2em;
+      line-height: 1.6em;
+      margin-bottom: 30px;
+      text-shadow: 0 0 5px #00ff99;
+    }
+
+    input[type="password"] {
+      padding: 10px;
+      font-size: 1em;
+      width: 80%;
+      border: none;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      background-color: #111;
+      color: #00ff99;
+      box-shadow: 0 0 5px #00ff99;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 1em;
+      background-color: #00ff99;
+      color: black;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #00ff99;
+    }
+
+    .message {
+      margin-top: 15px;
+      font-weight: bold;
+      text-shadow: 0 0 5px #00ff99;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        width: 90%;
+      }
+
+      input[type="password"] {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="matrix"></canvas>
+
+  <div class="container">
+    <h1>
+      Gut gemacht, Jan. Die erste Stufe liegt hinter dir – du hast bewiesen, dass du bereit bist.<br><br>
+      Doch der Weg ist noch lang, und das Tor zur nächsten Erkenntnis bleibt verschlossen.<br>
+      Nur ein Passwort kann es öffnen.<br>
+      Die Hinweise sind verstreut, die Wahrheit verborgen.<br>
+      <em>Finde das Wort, das nicht gesagt wurde – und du wirst weiterkommen.</em>
+    </h1>
+
+    <input type="password" id="password" placeholder="Passwort eingeben">
+    <button onclick="checkPassword()">Weiter</button>
+    <div class="message" id="message"></div>
+  </div>
+
+  <script>
+    // Matrix-Effekt
+    const canvas = document.getElementById("matrix");
+    const ctx = canvas.getContext("2d");
+
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+
+    const letters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
+
+    function drawMatrix() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#00ff99";
+      ctx.font = fontSize + "px Courier";
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = letters.charAt(Math.floor(Math.random() * letters.length));
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+
+        drops[i]++;
+      }
+    }
+
+    setInterval(drawMatrix, 50);
+
+    // Passwort-Logik
+    let attempts = 0;
+    const maxAttempts = 3;
+    const correctPassword = "2006";
+
+    function checkPassword() {
+      const input = document.getElementById("password").value;
+      const message = document.getElementById("message");
+
+      if (input === correctPassword) {
+        message.style.color = "#00ff99";
+        message.textContent = "Erfolg! Du wirst weitergeleitet...";
+        setTimeout(() => {
+          window.location.href = "erfolg.html";
+        }, 1500);
+      } else {
+        attempts++;
+        if (attempts >= maxAttempts) {
+          message.style.color = "red";
+          message.textContent = "Zu viele Fehlversuche. Der Zugang bleibt verschlossen.";
+          document.querySelector("button").disabled = true;
+        } else {
+          message.style.color = "orange";
+          message.textContent = `Falsches Passwort. Versuch ${attempts} von ${maxAttempts}.`;
+        }
+      }
+    }
+  </script>
+<body style="background-color:black; color:#00ff99; font-family:'Courier New'; text-align:center;">
+  <h1 style="margin-top:40vh; text-shadow:0 0 10px #00ff99;">🎉 Erkenntnis erreicht. Willkommen auf der nächsten Stufe.</h1>
+
+</body>
+</html>
